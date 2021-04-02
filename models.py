@@ -69,6 +69,16 @@ class RegressionModel(object):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
 
+        self.w0 = nn.Parameter(1, 250)
+        self.w1 = nn.Parameter(250,1)
+        self.b0 = nn.Parameter(1, 250)
+        self.b1 = nn.Parameter(1, 1)
+        
+        self.bath_size = 1
+        self.learningRate = -0.015
+        self.threshold = 0.02
+
+
     def run(self, x):
         """
         Runs the model for a batch of examples.
@@ -79,6 +89,14 @@ class RegressionModel(object):
             A node with shape (batch_size x 1) containing predicted y-values
         """
         "*** YOUR CODE HERE ***"
+
+        l0in = nn.Linear(x, self.w0)
+        l0mid = nn.AddBias(l0in, self.b0)
+        l0out = nn.ReLU(l0mid)
+        l1in = nn.Linear(l0out, self.w1)
+        l1mid = nn.AddBias(l1in, self.b1)
+        return l1mid
+
 
     def get_loss(self, x, y):
         """
@@ -91,12 +109,27 @@ class RegressionModel(object):
         Returns: a loss node
         """
         "*** YOUR CODE HERE ***"
+        return nn.SquareLoss(self.run(x), y)
 
     def train(self, dataset):
         """
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
+        train = True
+
+        while train:
+            lost = self.get_loss(nn.Constant(dataset.x), nn.Constant(dataset.y))
+            if nn.as_scalar(lost) <= self.threshold: break
+
+            gw0, gb0, gw1, gb1 = nn.gradients(lost, [self.w0, self.b0, self.w1, self.b1])
+
+            self.w0.update(gw0, self.learningRate)
+            self.w1.update(gw1, self.learningRate)
+            self.b0.update(gb0, self.learningRate)
+            self.b1.update(gb1, self.learningRate)
+
+                
 
 class DigitClassificationModel(object):
     """
