@@ -52,10 +52,14 @@ class PerceptronModel(object):
         "*** YOUR CODE HERE ***"
 
         mistakes = True
+        #run until no mistakes
         while mistakes:
             mistakes = False
+            #iterate data set
             for x, y in dataset.iterate_once(1):
+                #perdiction is not scalay for y
                 if self.get_prediction(x) != nn.as_scalar(y):
+                    #update teh weights
                     self.get_weights().update(x, nn.as_scalar(y))
                     mistakes = True
 
@@ -70,7 +74,7 @@ class RegressionModel(object):
     def __init__(self):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
-
+        #initialize parameters
         self.w0 = nn.Parameter(1, 250)
         self.w1 = nn.Parameter(250, 1)
         self.b0 = nn.Parameter(1, 250)
@@ -81,7 +85,7 @@ class RegressionModel(object):
         self.threshold = 0.02
 
     def run(self, x):
-        """
+        """g
         Runs the model for a batch of examples.
 
         Inputs:
@@ -117,16 +121,20 @@ class RegressionModel(object):
         """
         "*** YOUR CODE HERE ***"
         train = True
-
+        #train model
         while train:
+            #get the loss
             lost = self.get_loss(nn.Constant(dataset.x),
                                  nn.Constant(dataset.y))
+            #if we break threashold then stop
             if nn.as_scalar(lost) <= self.threshold:
                 break
-
+            
+            #calc gradients
             gw0, gb0, gw1, gb1 = nn.gradients(
                 lost, [self.w0, self.b0, self.w1, self.b1])
 
+            #update the parameters
             self.w0.update(gw0, self.learningRate)
             self.w1.update(gw1, self.learningRate)
             self.b0.update(gb0, self.learningRate)
