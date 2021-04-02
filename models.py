@@ -1,5 +1,6 @@
 import nn
 
+
 class PerceptronModel(object):
     def __init__(self, dimensions):
         """
@@ -65,19 +66,19 @@ class RegressionModel(object):
     numbers to real numbers. The network should be sufficiently large to be able
     to approximate sin(x) on the interval [-2pi, 2pi] to reasonable precision.
     """
+
     def __init__(self):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
 
         self.w0 = nn.Parameter(1, 250)
-        self.w1 = nn.Parameter(250,1)
+        self.w1 = nn.Parameter(250, 1)
         self.b0 = nn.Parameter(1, 250)
         self.b1 = nn.Parameter(1, 1)
-        
+
         self.bath_size = 1
         self.learningRate = -0.015
         self.threshold = 0.02
-
 
     def run(self, x):
         """
@@ -96,7 +97,6 @@ class RegressionModel(object):
         l1in = nn.Linear(l0out, self.w1)
         l1mid = nn.AddBias(l1in, self.b1)
         return l1mid
-
 
     def get_loss(self, x, y):
         """
@@ -119,17 +119,19 @@ class RegressionModel(object):
         train = True
 
         while train:
-            lost = self.get_loss(nn.Constant(dataset.x), nn.Constant(dataset.y))
-            if nn.as_scalar(lost) <= self.threshold: break
+            lost = self.get_loss(nn.Constant(dataset.x),
+                                 nn.Constant(dataset.y))
+            if nn.as_scalar(lost) <= self.threshold:
+                break
 
-            gw0, gb0, gw1, gb1 = nn.gradients(lost, [self.w0, self.b0, self.w1, self.b1])
+            gw0, gb0, gw1, gb1 = nn.gradients(
+                lost, [self.w0, self.b0, self.w1, self.b1])
 
             self.w0.update(gw0, self.learningRate)
             self.w1.update(gw1, self.learningRate)
             self.b0.update(gb0, self.learningRate)
             self.b1.update(gb1, self.learningRate)
 
-                
 
 class DigitClassificationModel(object):
     """
@@ -145,6 +147,7 @@ class DigitClassificationModel(object):
     methods here. We recommend that you implement the RegressionModel before
     working on this part of the project.)
     """
+
     def __init__(self):
         # Initialize your model parameters here
         "*** YOUR CODE HERE ***"
@@ -185,4 +188,3 @@ class DigitClassificationModel(object):
         Trains the model.
         """
         "*** YOUR CODE HERE ***"
-
